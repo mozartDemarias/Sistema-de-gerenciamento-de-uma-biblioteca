@@ -1,17 +1,26 @@
 #include <stdio.h>
-#include <string.h>
 #include "../include/livros.h"
 #include "../include/usuario.h"
+#include "../include/emprestimos.h"
 
-int main(){
+int main() {
+    LIVRO lista_livros[MAX_LIVROS];
+    int total_livros = 0;
+
+    USUARIO lista_usuarios[MAX_USUARIOS];
+    int total_usuarios = 0;
+
+    EMPRESTIMO lista_emprestimos[MAX_EMPRESTIMOS];
+    int total_emprestimos = 0;
+
+    // Carrega todos os dados dos arquivos CSV ao iniciar
+    carregar_livros(lista_livros, &total_livros);
+    carregar_usuarios(lista_usuarios, &total_usuarios);
+    carregar_emprestimos(lista_emprestimos, &total_emprestimos);
+
     int escolha;
-    LIVRO novo_livro;
-    USUARIO novo_usuario; 
-    FILE *arq; 
-
-    do{
+    do {
         printf("\n=== SISTEMA DE BIBLIOTECA ===\n");
-        printf("Escolha a opcao que deseja:\n");
         printf("1- Cadastrar livro\n");
         printf("2- Cadastrar usuario\n");
         printf("3- Listagem de livros\n");
@@ -23,119 +32,48 @@ int main(){
         printf("9- Registrar emprestimo\n");
         printf("10- Registrar devolucao\n");
         printf("0- Sair\n");
-        printf("Opcao: ");
+        printf("Escolha a opcao que deseja: ");
 
         scanf("%d", &escolha);
 
-        switch(escolha){ 
+        switch (escolha) {
             case 1:
-                printf("\n--- Cadastrar Livro ---\n");
-                
-                printf("Digite o codigo do livro:\n");
-                scanf("%d", &novo_livro.codigo);
-                getchar(); 
-                
-                printf("Digite o titulo do livro:\n");
-                fgets(novo_livro.titulo, sizeof(novo_livro.titulo), stdin);
-                novo_livro.titulo[strcspn(novo_livro.titulo, "\n")] = '\0'; 
-                
-                printf("Digite o nome do autor(a) do livro:\n");
-                fgets(novo_livro.autor, sizeof(novo_livro.autor), stdin);
-                novo_livro.autor[strcspn(novo_livro.autor, "\n")] = '\0'; 
-                
-                printf("Digite o ano do livro:\n");
-                scanf("%d", &novo_livro.ano);
-                
-                printf("Digite a quantidade:\n");
-                scanf("%d", &novo_livro.quantidade);
-
-                arq = fopen("../data/livros.csv", "a");
-                if(arq == NULL){
-                    printf("Erro ao abrir o arquivo livros.csv!\n");
-                    break; 
-                }
-
-                fprintf(arq, "%d;%s;%s;%d;%d\n", 
-                        novo_livro.codigo, 
-                        novo_livro.titulo, 
-                        novo_livro.autor, 
-                        novo_livro.ano, 
-                        novo_livro.quantidade);
-
-                fclose(arq);
-                printf("Livro cadastrado com sucesso!\n");
-                break; 
+                cadastrar_livro(lista_livros, &total_livros);
+                break;
             case 2:
-                printf("\n--- Cadastrar Usuario ---\n");
-                
-                printf("Digite o numero de matricula:\n");
-                scanf("%d", &novo_usuario.matricula);
-                getchar(); 
-                
-                printf("Digite o nome de usuario:\n");
-                fgets(novo_usuario.nome, sizeof(novo_usuario.nome), stdin);
-                novo_usuario.nome[strcspn(novo_usuario.nome, "\n")] = '\0'; 
-                
-                printf("Digite o curso:\n");
-                fgets(novo_usuario.curso, sizeof(novo_usuario.curso), stdin);
-                novo_usuario.curso[strcspn(novo_usuario.curso, "\n")] = '\0'; 
-
-                arq = fopen("../data/usuarios.csv", "a");
-                if(arq == NULL){
-                    printf("Erro ao abrir o arquivo usuarios.csv!\n");
-                    break;
-                }
-
-                fprintf(arq, "%d;%s;%s\n", 
-                        novo_usuario.matricula, 
-                        novo_usuario.nome, 
-                        novo_usuario.curso);
-
-                fclose(arq);
-                printf("Usuario cadastrado com sucesso!\n");
+                cadastrar_usuario(lista_usuarios, &total_usuarios);
                 break;
-
-            case 3: 
-                printf("\n--- Listagem de Livros ---\n");
+            case 3:
+                listar_livros(lista_livros, total_livros);
                 break;
-
-            case 4: 
-                printf("\n--- Listagem de Usuarios ---\n");
+            case 4:
+                listar_usuarios(lista_usuarios, total_usuarios);
                 break;
-
-            case 5: 
-                printf("\n--- Listagem de Emprestimos ---\n");
+            case 5:
+                listar_emprestimos(lista_emprestimos, total_emprestimos);
                 break;
-
-            case 6: 
-                printf("\n--- Busca por Titulo ---\n");
+            case 6:
+                buscar_livro_titulo(lista_livros, total_livros);
                 break;
-
-            case 7: 
-                printf("\n--- Busca por Autor ---\n");
+            case 7:
+                buscar_livro_autor(lista_livros, total_livros);
                 break;
-
-            case 8: 
-                printf("\n--- Busca por Matricula ---\n");
+            case 8:
+                buscar_usuario_matricula(lista_usuarios, total_usuarios);
                 break;
-
             case 9:
-                printf("\n--- Registrar Emprestimo ---\n");
+                registrar_emprestimo(lista_emprestimos, &total_emprestimos, lista_livros, total_livros, lista_usuarios, total_usuarios);
                 break;
-
             case 10:
-                printf("\n--- Registrar Devolucao ---\n");
+                registrar_devolucao(lista_emprestimos, total_emprestimos, lista_livros, total_livros);
                 break;
-
             case 0:
-                printf("\nEncerrando sistema...\n");
+                printf("Encerrando sistema...\n");
                 break;
-
             default:
-                printf("\nErro: Opcao invalida! Tente novamente.\n");
+                printf("Opcao invalida!\n");
                 break;
         }
-            
     } while (escolha != 0);
 
     return 0;
