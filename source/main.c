@@ -13,7 +13,6 @@ int main() {
     EMPRESTIMO lista_emprestimos[MAX_EMPRESTIMOS];
     int total_emprestimos = 0;
 
-    // Carrega todos os dados dos arquivos CSV ao iniciar
     carregar_livros(lista_livros, &total_livros);
     carregar_usuarios(lista_usuarios, &total_usuarios);
     carregar_emprestimos(lista_emprestimos, &total_emprestimos);
