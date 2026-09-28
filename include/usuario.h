@@ -3,11 +3,18 @@
 
 #define MAX_CURSO 50
 #define MAX_NOME 100
+#define MAX_USUARIOS 200
 
-typedef struct{
+typedef struct {
     int matricula;
-    char curso[MAX_CURSO];
     char nome[MAX_NOME];
-}USUARIO;
+    char curso[MAX_CURSO];
+} USUARIO;
 
-#endif
+void carregar_usuarios(USUARIO usuarios[], int *total);
+void salvar_usuarios(USUARIO usuarios[], int total);
+void cadastrar_usuario(USUARIO usuarios[], int *total);
+void listar_usuarios(USUARIO usuarios[], int total);
+void buscar_usuario_matricula(USUARIO usuarios[], int total);
+
+#endif  
