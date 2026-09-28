@@ -1,13 +1,13 @@
-#ifndef USUARIOS_H
-#define USUARIOS_H
+#ifndef USUARIO_H
+#define USUARIO_H
 
 #define MAX_CURSO 50
 #define MAX_NOME 100
 
 typedef struct{
     int matricula;
-    char curso[50_CURSO];
+    char curso[MAX_CURSO];
     char nome[MAX_NOME];
-}USUARIOS;
+}USUARIO;
 
 #endif
