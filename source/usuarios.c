@@ -4,7 +4,34 @@
 #include "../include/usuario.h"
 #include "../include/utils.h"
 
-void carregar_usuarios(USUARIO usuarios[], int *total) {
+/* Garante espaco no vetor dinamico de usuarios, dobrando a capacidade quando necessario. */
+static int garantir_capacidade_usuarios(USUARIO **usuarios, int total, int *capacidade) {
+    if (*usuarios == NULL || *capacidade <= 0) {
+        int cap_inicial = CAPACIDADE_INICIAL_USUARIOS;
+        USUARIO *novo = (USUARIO *)malloc((size_t)cap_inicial * sizeof(USUARIO));
+        if (novo == NULL) {
+            printf("Erro critico: Falha ao alocar memoria para usuarios!\n");
+            return 0;
+        }
+        *usuarios = novo;
+        *capacidade = cap_inicial;
+    }
+
+    if (total >= *capacidade) {
+        int nova_cap = (*capacidade) * 2;
+        USUARIO *temp = (USUARIO *)realloc(*usuarios, (size_t)nova_cap * sizeof(USUARIO));
+        if (temp == NULL) {
+            printf("Erro critico: Falha ao realocar memoria para usuarios!\n");
+            return 0;
+        }
+        *usuarios = temp;
+        *capacidade = nova_cap;
+    }
+
+    return 1;
+}
+
+void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade) {
     FILE *arq = fopen("../data/usuarios.csv", "r");
     *total = 0;
     if (arq == NULL) {
@@ -18,24 +45,32 @@ void carregar_usuarios(USUARIO usuarios[], int *total) {
         if (linha[0] == '\0') continue;
         if (*total == 0 && (linha[0] < '0' || linha[0] > '9')) continue;
 
+        USUARIO temp;
         char *token = strtok(linha, ";");
         if (!token) continue;
-        usuarios[*total].matricula = atoi(token);
+        temp.matricula = atoi(token);
 
         token = strtok(NULL, ";");
         if (!token) continue;
-        strcpy(usuarios[*total].nome, token);
+        strncpy(temp.nome, token, MAX_NOME - 1);
+        temp.nome[MAX_NOME - 1] = '\0';
 
         token = strtok(NULL, ";");
         if (!token) continue;
-        strcpy(usuarios[*total].curso, token);
+        strncpy(temp.curso, token, MAX_CURSO - 1);
+        temp.curso[MAX_CURSO - 1] = '\0';
 
+        if (!garantir_capacidade_usuarios(usuarios, *total, capacidade)) {
+            break;
+        }
+
+        (*usuarios)[*total] = temp;
         (*total)++;
     }
     fclose(arq);
 }
 
-void salvar_usuarios(USUARIO usuarios[], int total) {
+void salvar_usuarios(USUARIO *usuarios, int total) {
     FILE *arq = fopen("../data/usuarios.csv", "w");
     if (arq == NULL) {
         arq = fopen("data/usuarios.csv", "w");
@@ -55,19 +90,14 @@ void salvar_usuarios(USUARIO usuarios[], int total) {
     fclose(arq);
 }
 
-void cadastrar_usuario(USUARIO usuarios[], int *total) {
-    if (*total >= MAX_USUARIOS) {
-        printf("Erro: Limite de usuarios atingido!\n");
-        return;
-    }
-
+void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade) {
     USUARIO novo;
     printf("Digite o numero de matricula:\n");
     scanf("%d", &novo.matricula);
     getchar();
 
     for (int i = 0; i < *total; i++) {
-        if (usuarios[i].matricula == novo.matricula) {
+        if ((*usuarios)[i].matricula == novo.matricula) {
             printf("Erro: Matricula ja cadastrada!\n");
             return;
         }
@@ -81,13 +111,17 @@ void cadastrar_usuario(USUARIO usuarios[], int *total) {
     fgets(novo.curso, sizeof(novo.curso), stdin);
     limpar_enter(novo.curso);
 
-    usuarios[*total] = novo;
+    if (!garantir_capacidade_usuarios(usuarios, *total, capacidade)) {
+        return;
+    }
+
+    (*usuarios)[*total] = novo;
     (*total)++;
-    salvar_usuarios(usuarios, *total);
+    salvar_usuarios(*usuarios, *total);
     printf("Usuario cadastrado com sucesso!\n");
 }
 
-void listar_usuarios(USUARIO usuarios[], int total) {
+void listar_usuarios(USUARIO *usuarios, int total) {
     if (total == 0) {
         printf("Nenhum usuario cadastrado.\n");
         return;
@@ -99,7 +133,7 @@ void listar_usuarios(USUARIO usuarios[], int total) {
     }
 }
 
-void buscar_usuario_matricula(USUARIO usuarios[], int total) {
+void buscar_usuario_matricula(USUARIO *usuarios, int total) {
     int mat;
     printf("Digite a matricula para busca:\n");
     scanf("%d", &mat);
