@@ -1,3 +1,9 @@
+/*
+ * main.c
+ * Ponto de entrada do Sistema de Gerenciamento de Biblioteca Universitaria.
+ * Inicializa vetores dinamicos (priorizando .bin com fallback para .csv),
+ * executa o menu interativo e libera toda a memoria alocada ao encerrar.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include "../include/livros.h"
@@ -19,6 +25,7 @@ int main() {
     int total_emprestimos = 0;
     EMPRESTIMO *lista_emprestimos = NULL;
 
+    /* Tenta carregar dos arquivos binarios (.bin); caso nao existam, faz fallback para CSV. */
     if (!carregar_livros_bin(&lista_livros, &total_livros, &capacidade_livros)) {
         capacidade_livros = CAPACIDADE_INICIAL_LIVROS;
         lista_livros = (LIVRO *)malloc((size_t)capacidade_livros * sizeof(LIVRO));
@@ -52,6 +59,7 @@ int main() {
         carregar_emprestimos(&lista_emprestimos, &total_emprestimos, &capacidade_emprestimos);
     }
 
+    /* Loop principal do menu interativo com protecao contra EOF e entradas nao numericas. */
     int escolha;
     do {
         printf("\n=== SISTEMA DE BIBLIOTECA ===\n");
@@ -206,6 +214,7 @@ int main() {
         }
     } while (escolha != 0);
 
+    /* Libera toda a memoria alocada dinamicamente antes de encerrar o programa. */
     free(lista_livros);
     free(lista_usuarios);
     free(lista_emprestimos);

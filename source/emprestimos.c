@@ -1,10 +1,18 @@
+/*
+ * emprestimos.c
+ * Gerenciamento dinamico de emprestimos e devolucoes: alocacao com malloc/realloc,
+ * persistencia em CSV e binario (.bin), controle de estoque e historico por usuario.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include "../include/emprestimos.h"
 #include "../include/utils.h"
 
-/* Garante espaco no vetor dinamico de emprestimos, dobrando a capacidade quando necessario. */
+/*
+ * Garante espaco no vetor dinamico de emprestimos.
+ * Dobra a capacidade via realloc usando ponteiro temporario e verifica NULL antes de atualizar.
+ */
 static int garantir_capacidade_emprestimos(EMPRESTIMO **emprestimos, int total, int *capacidade) {
     if (*emprestimos == NULL || *capacidade <= 0) {
         int cap_inicial = CAPACIDADE_INICIAL_EMPRESTIMOS;
@@ -31,6 +39,7 @@ static int garantir_capacidade_emprestimos(EMPRESTIMO **emprestimos, int total, 
     return 1;
 }
 
+/* Carrega os emprestimos de emprestimos.csv expandindo o vetor conforme necessario. */
 void carregar_emprestimos(EMPRESTIMO **emprestimos, int *total, int *capacidade) {
     FILE *arq = fopen("../data/emprestimos.csv", "r");
     *total = 0;
@@ -93,6 +102,10 @@ void salvar_emprestimos(EMPRESTIMO *emprestimos, int total) {
     fclose(arq);
 }
 
+/*
+ * Carrega emprestimos de emprestimos.bin no formato [int total][total * sizeof(EMPRESTIMO)].
+ * Aloca memoria dinamicamente com malloc e substitui o ponteiro anterior somente apos sucesso.
+ */
 int carregar_emprestimos_bin(EMPRESTIMO **emprestimos, int *total, int *capacidade) {
     FILE *arq = fopen("../data/emprestimos.bin", "rb");
     if (arq == NULL) {
@@ -132,6 +145,7 @@ int carregar_emprestimos_bin(EMPRESTIMO **emprestimos, int *total, int *capacida
     return 1;
 }
 
+/* Persiste o inteiro 'total' seguido do bloco contiguo de structs EMPRESTIMO em emprestimos.bin. */
 void salvar_emprestimos_bin(EMPRESTIMO *emprestimos, int total) {
     FILE *arq = fopen("../data/emprestimos.bin", "wb");
     if (arq == NULL) {
@@ -157,6 +171,7 @@ void salvar_emprestimos_bin(EMPRESTIMO *emprestimos, int total) {
     fclose(arq);
 }
 
+/* Valida usuario/livro/estoque, gera ID unico, reduz quantidade e salva em CSV e binario. */
 void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacidade_emp,
                           LIVRO *livros, int total_liv, USUARIO *usuarios, int total_usu) {
     int matricula;
@@ -225,6 +240,7 @@ void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacid
     printf("Emprestimo registrado com sucesso! ID: %d\n", novo_id);
 }
 
+/* Marca o emprestimo como devolvido (ativo = 0), restaura estoque do livro e persiste ambos. */
 void registrar_devolucao(EMPRESTIMO *emprestimos, int total_emp, LIVRO *livros, int total_liv) {
     if (total_emp == 0) {
         printf("Nenhum emprestimo registrado.\n");
@@ -284,6 +300,7 @@ void listar_emprestimos(EMPRESTIMO *emprestimos, int total_emp) {
     }
 }
 
+/* Cruzamento manual de emprestimos por matricula do usuario e codigo do livro para exibir o historico completo. */
 void exibir_historico_usuario(EMPRESTIMO *emprestimos, int total_emp,
                               LIVRO *livros, int total_liv,
                               USUARIO *usuarios, int total_usu) {

@@ -1,3 +1,7 @@
+/*
+ * utils.c
+ * Implementacoes manuais de limpeza e comparacao de strings (sem funcoes prontas de busca).
+ */
 #include "../include/utils.h"
 
 void limpar_enter(char str[]) {
@@ -11,6 +15,7 @@ void limpar_enter(char str[]) {
     }
 }
 
+/* Converte letras ASCII maiusculas ('A'-'Z') para minusculas sem depender de <ctype.h>. */
 char para_minuscula(char c) {
     if (c >= 'A' && c <= 'Z') {
         return c + 32;
@@ -29,6 +34,7 @@ int textos_iguais(char str1[], char str2[]) {
     return (str1[i] == '\0' && str2[i] == '\0');
 }
 
+/* Busca sequencial manual de substring comparando caractere a caractere. */
 int contem_texto(char texto_completo[], char busca[]) {
     int i, j;
     if (busca[0] == '\0') return 0;
@@ -40,7 +46,7 @@ int contem_texto(char texto_completo[], char busca[]) {
             j++;
         }
         if (busca[j] == '\0') {
-            return 1; 
+            return 1;
         }
     }
     return 0;

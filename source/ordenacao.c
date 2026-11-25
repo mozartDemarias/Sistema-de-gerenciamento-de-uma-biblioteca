@@ -1,3 +1,8 @@
+/*
+ * ordenacao.c
+ * Implementacao manual dos algoritmos Bubble Sort e Insertion Sort
+ * para ordenacao de livros (codigo/titulo) e usuarios (matricula).
+ */
 #include <stddef.h>
 #include "../include/ordenacao.h"
 
@@ -9,7 +14,7 @@ static char para_minuscula_ascii(char c) {
     return c;
 }
 
-/* Compara duas strings manualmente sem diferenciar maiusculas/minusculas ASCII. */
+/* Compara duas strings manualmente com unsigned char para evitar distorcao em bytes UTF-8. */
 static int comparar_titulos(const char *a, const char *b) {
     int i = 0;
     while (a[i] != '\0' && b[i] != '\0') {
@@ -23,6 +28,7 @@ static int comparar_titulos(const char *a, const char *b) {
     return (int)(unsigned char)a[i] - (int)(unsigned char)b[i];
 }
 
+/* Bubble Sort O(n^2) por codigo com flag de parada antecipada quando o vetor ja esta ordenado. */
 void bubble_sort_livros_codigo(LIVRO *livros, int total) {
     if (livros == NULL || total <= 1) {
         return;
@@ -44,6 +50,7 @@ void bubble_sort_livros_codigo(LIVRO *livros, int total) {
     }
 }
 
+/* Bubble Sort O(n^2) por titulo em ordem alfabetica com parada antecipada. */
 void bubble_sort_livros_titulo(LIVRO *livros, int total) {
     if (livros == NULL || total <= 1) {
         return;
@@ -65,6 +72,7 @@ void bubble_sort_livros_titulo(LIVRO *livros, int total) {
     }
 }
 
+/* Insertion Sort O(n^2) por codigo: desloca elementos maiores para inserir a chave na posicao correta. */
 void insertion_sort_livros_codigo(LIVRO *livros, int total) {
     if (livros == NULL || total <= 1) {
         return;
@@ -81,6 +89,7 @@ void insertion_sort_livros_codigo(LIVRO *livros, int total) {
     }
 }
 
+/* Insertion Sort O(n^2) por titulo em ordem alfabetica. */
 void insertion_sort_livros_titulo(LIVRO *livros, int total) {
     if (livros == NULL || total <= 1) {
         return;
@@ -97,6 +106,7 @@ void insertion_sort_livros_titulo(LIVRO *livros, int total) {
     }
 }
 
+/* Insertion Sort O(n^2) para ordenar usuarios por numero de matricula crescente. */
 void insertion_sort_usuarios_matricula(USUARIO *usuarios, int total) {
     if (usuarios == NULL || total <= 1) {
         return;

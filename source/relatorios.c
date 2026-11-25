@@ -1,3 +1,8 @@
+/*
+ * relatorios.c
+ * Benchmark comparativo de desempenho com <time.h> (Bubble Sort vs. Insertion Sort e
+ * Busca Sequencial vs. Pesquisa Binaria) e exportacao do relatorio consolidado da biblioteca.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,7 +42,7 @@ static int busca_binaria_codigo_bench(const LIVRO *livros, int total, int codigo
     return -1;
 }
 
-/* Formata e grava a tabela comparativa de desempenho no stream informado. */
+/* Formata e grava a tabela comparativa de desempenho no stream informado (terminal ou arquivo). */
 static void escrever_relatorio(FILE *saida,
                                int qtd_livros,
                                int qtd_buscas,
@@ -74,6 +79,10 @@ static void escrever_relatorio(FILE *saida,
             comp_seq_por_busca, comp_bin_por_busca);
 }
 
+/*
+ * Executa o benchmark em massa temporaria alocada dinamicamente, libera a memoria ao termino,
+ * exibe a tabela comparativa no terminal e persiste em data/relatorio_desempenho.txt.
+ */
 void gerar_relatorio_desempenho(void) {
     const int n = QTD_LIVROS_BENCHMARK;
     const int buscas = QTD_BUSCAS_BENCHMARK;
@@ -108,6 +117,7 @@ void gerar_relatorio_desempenho(void) {
         base[j] = temp;
     }
 
+    /* Duplica o mesmo conjunto desordenado para comparar ambos os algoritmos em condicoes identicas. */
     memcpy(copia_bubble, base, (size_t)n * sizeof(LIVRO));
     memcpy(copia_insertion, base, (size_t)n * sizeof(LIVRO));
 
@@ -121,7 +131,7 @@ void gerar_relatorio_desempenho(void) {
     fim = clock();
     double tempo_insertion_ms = ((double)(fim - inicio) * 1000.0) / CLOCKS_PER_SEC;
 
-    /* Pior caso: ultimo elemento do vetor ordenado. */
+    /* Pior caso: ultimo elemento do vetor ordenado; acumuladores volatile impedem dead-code elimination. */
     int alvo = copia_insertion[n - 1].codigo;
     long total_comp_seq = 0;
     long total_comp_bin = 0;
@@ -175,6 +185,10 @@ void gerar_relatorio_desempenho(void) {
     printf("Relatorio salvo em data/relatorio_desempenho.txt!\n");
 }
 
+/*
+ * Consolida estatisticas gerais, acervo completo e emprestimos ativos (cruzando usuario e livro)
+ * no arquivo data/relatorio_biblioteca.txt.
+ */
 void exportar_relatorio_geral(LIVRO *livros, int total_liv,
                               USUARIO *usuarios, int total_usu,
                               EMPRESTIMO *emprestimos, int total_emp) {
@@ -238,6 +252,7 @@ void exportar_relatorio_geral(LIVRO *livros, int total_liv,
     } else {
         for (int i = 0; i < total_emp; i++) {
             if (emprestimos[i].ativo) {
+                /* Busca sequencial manual para resolver nome do usuario e titulo do livro. */
                 const char *nome_usuario = "Usuario nao encontrado";
                 for (int u = 0; u < total_usu; u++) {
                     if (usuarios[u].matricula == emprestimos[i].matricula_usuario) {

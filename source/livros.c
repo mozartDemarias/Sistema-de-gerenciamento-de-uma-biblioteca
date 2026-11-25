@@ -1,3 +1,8 @@
+/*
+ * livros.c
+ * Gerenciamento dinamico do acervo de livros: alocacao com malloc/realloc,
+ * persistencia em CSV e binario (.bin), listagem, busca sequencial e pesquisa binaria.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +10,10 @@
 #include "../include/ordenacao.h"
 #include "../include/utils.h"
 
-/* Garante espaco no vetor dinamico de livros, dobrando a capacidade quando necessario. */
+/*
+ * Garante espaco no vetor dinamico de livros.
+ * Dobra a capacidade via realloc usando ponteiro temporario para preservar o bloco original em caso de falha.
+ */
 static int garantir_capacidade_livros(LIVRO **livros, int total, int *capacidade) {
     if (*livros == NULL || *capacidade <= 0) {
         int cap_inicial = CAPACIDADE_INICIAL_LIVROS;
@@ -32,6 +40,7 @@ static int garantir_capacidade_livros(LIVRO **livros, int total, int *capacidade
     return 1;
 }
 
+/* Carrega os livros de livros.csv expandindo o vetor conforme necessario. */
 void carregar_livros(LIVRO **livros, int *total, int *capacidade) {
     FILE *arq = fopen("../data/livros.csv", "r");
     *total = 0;
@@ -45,6 +54,7 @@ void carregar_livros(LIVRO **livros, int *total, int *capacidade) {
         limpar_enter(linha);
         if (linha[0] == '\0') continue;
 
+        /* Ignora a primeira linha caso seja o cabecalho textual do CSV. */
         if (*total == 0 && (linha[0] < '0' || linha[0] > '9')) continue;
 
         LIVRO temp = {0};
@@ -102,6 +112,10 @@ void salvar_livros(LIVRO *livros, int total) {
     fclose(arq);
 }
 
+/*
+ * Carrega livros de livros.bin no formato [int total][total * sizeof(LIVRO)].
+ * Aloca exatamente a capacidade necessaria com malloc e libera o ponteiro anterior apenas apos sucesso.
+ */
 int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade) {
     FILE *arq = fopen("../data/livros.bin", "rb");
     if (arq == NULL) {
@@ -141,6 +155,7 @@ int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade) {
     return 1;
 }
 
+/* Persiste o inteiro 'total' seguido do bloco contiguo de structs LIVRO em livros.bin. */
 void salvar_livros_bin(LIVRO *livros, int total) {
     FILE *arq = fopen("../data/livros.bin", "wb");
     if (arq == NULL) {
@@ -256,6 +271,7 @@ void buscar_livro_autor(LIVRO *livros, int total) {
     }
 }
 
+/* Pesquisa binaria manual O(log n) por codigo apos ordenacao previa do acervo. */
 void buscar_livro_binaria_codigo(LIVRO *livros, int total) {
     if (livros == NULL || total <= 0) {
         printf("Nenhum livro cadastrado.\n");
@@ -279,6 +295,7 @@ void buscar_livro_binaria_codigo(LIVRO *livros, int total) {
     int comparacoes = 0;
 
     while (inicio <= fim) {
+        /* Calcula o ponto medio evitando possivel overflow em (inicio + fim). */
         int meio = inicio + (fim - inicio) / 2;
         comparacoes++;
 

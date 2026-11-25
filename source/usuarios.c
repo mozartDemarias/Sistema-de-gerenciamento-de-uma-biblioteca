@@ -1,3 +1,8 @@
+/*
+ * usuarios.c
+ * Gerenciamento dinamico de usuarios: alocacao com malloc/realloc,
+ * persistencia em CSV e binario (.bin), listagem, busca sequencial e pesquisa binaria.
+ */
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -5,7 +10,10 @@
 #include "../include/ordenacao.h"
 #include "../include/utils.h"
 
-/* Garante espaco no vetor dinamico de usuarios, dobrando a capacidade quando necessario. */
+/*
+ * Garante espaco no vetor dinamico de usuarios.
+ * Dobra a capacidade via realloc usando ponteiro temporario e verifica NULL antes de atualizar.
+ */
 static int garantir_capacidade_usuarios(USUARIO **usuarios, int total, int *capacidade) {
     if (*usuarios == NULL || *capacidade <= 0) {
         int cap_inicial = CAPACIDADE_INICIAL_USUARIOS;
@@ -32,6 +40,7 @@ static int garantir_capacidade_usuarios(USUARIO **usuarios, int total, int *capa
     return 1;
 }
 
+/* Carrega os usuarios de usuarios.csv expandindo o vetor conforme necessario. */
 void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade) {
     FILE *arq = fopen("../data/usuarios.csv", "r");
     *total = 0;
@@ -91,6 +100,10 @@ void salvar_usuarios(USUARIO *usuarios, int total) {
     fclose(arq);
 }
 
+/*
+ * Carrega usuarios de usuarios.bin no formato [int total][total * sizeof(USUARIO)].
+ * Aloca dinamicamente com malloc e substitui o ponteiro anterior somente apos leitura completa.
+ */
 int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade) {
     FILE *arq = fopen("../data/usuarios.bin", "rb");
     if (arq == NULL) {
@@ -130,6 +143,7 @@ int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade) {
     return 1;
 }
 
+/* Persiste o inteiro 'total' seguido do bloco contiguo de structs USUARIO em usuarios.bin. */
 void salvar_usuarios_bin(USUARIO *usuarios, int total) {
     FILE *arq = fopen("../data/usuarios.bin", "wb");
     if (arq == NULL) {
@@ -214,6 +228,7 @@ void buscar_usuario_matricula(USUARIO *usuarios, int total) {
     printf("Erro: Usuario com matricula %d nao encontrado.\n", mat);
 }
 
+/* Pesquisa binaria manual O(log n) por matricula apos ordenacao previa dos usuarios. */
 void buscar_usuario_binaria_matricula(USUARIO *usuarios, int total) {
     if (usuarios == NULL || total <= 0) {
         printf("Nenhum usuario cadastrado.\n");
