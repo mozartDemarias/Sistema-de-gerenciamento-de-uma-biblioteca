@@ -4,6 +4,7 @@
 #include "../include/usuario.h"
 #include "../include/emprestimos.h"
 #include "../include/ordenacao.h"
+#include "../include/relatorios.h"
 
 int main() {
     int capacidade_livros = 0;
@@ -69,6 +70,7 @@ int main() {
         printf("13- Busca binaria de livro por codigo\n");
         printf("14- Busca binaria de usuario por matricula\n");
         printf("15- Sincronizar/salvar dados em binario (.bin)\n");
+        printf("16- Gerar Relatorio de Desempenho\n");
         printf("0- Sair\n");
         printf("Escolha a opcao que deseja: ");
 
@@ -179,6 +181,9 @@ int main() {
                 salvar_usuarios_bin(lista_usuarios, total_usuarios);
                 salvar_emprestimos_bin(lista_emprestimos, total_emprestimos);
                 printf("Dados sincronizados e salvos em arquivos binarios (.bin) com sucesso!\n");
+                break;
+            case 16:
+                gerar_relatorio_desempenho();
                 break;
             case 0:
                 printf("Encerrando sistema...\n");
