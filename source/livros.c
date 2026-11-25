@@ -47,7 +47,7 @@ void carregar_livros(LIVRO **livros, int *total, int *capacidade) {
 
         if (*total == 0 && (linha[0] < '0' || linha[0] > '9')) continue;
 
-        LIVRO temp;
+        LIVRO temp = {0};
         char *token = strtok(linha, ";");
         if (!token) continue;
         temp.codigo = atoi(token);
@@ -102,8 +102,72 @@ void salvar_livros(LIVRO *livros, int total) {
     fclose(arq);
 }
 
+int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade) {
+    FILE *arq = fopen("../data/livros.bin", "rb");
+    if (arq == NULL) {
+        arq = fopen("data/livros.bin", "rb");
+        if (arq == NULL) {
+            return 0;
+        }
+    }
+
+    int qtd = 0;
+    if (fread(&qtd, sizeof(int), 1, arq) != 1 || qtd < 0) {
+        fclose(arq);
+        return 0;
+    }
+
+    int nova_cap = (qtd > 0) ? qtd : CAPACIDADE_INICIAL_LIVROS;
+    LIVRO *novo = (LIVRO *)malloc((size_t)nova_cap * sizeof(LIVRO));
+    if (novo == NULL) {
+        printf("Erro critico: Falha ao alocar memoria ao carregar livros.bin!\n");
+        fclose(arq);
+        return 0;
+    }
+
+    if (qtd > 0) {
+        if (fread(novo, sizeof(LIVRO), (size_t)qtd, arq) != (size_t)qtd) {
+            free(novo);
+            fclose(arq);
+            return 0;
+        }
+    }
+
+    fclose(arq);
+    free(*livros);
+    *livros = novo;
+    *total = qtd;
+    *capacidade = nova_cap;
+    return 1;
+}
+
+void salvar_livros_bin(LIVRO *livros, int total) {
+    FILE *arq = fopen("../data/livros.bin", "wb");
+    if (arq == NULL) {
+        arq = fopen("data/livros.bin", "wb");
+        if (arq == NULL) {
+            printf("Erro ao salvar livros.bin!\n");
+            return;
+        }
+    }
+
+    if (fwrite(&total, sizeof(int), 1, arq) != 1) {
+        printf("Erro ao gravar cabecalho de livros.bin!\n");
+        fclose(arq);
+        return;
+    }
+
+    if (total > 0 && livros != NULL) {
+        if (fwrite(livros, sizeof(LIVRO), (size_t)total, arq) != (size_t)total) {
+            printf("Erro ao gravar registros em livros.bin!\n");
+        }
+    }
+
+    fclose(arq);
+}
+
 void cadastrar_livro(LIVRO **livros, int *total, int *capacidade) {
-    LIVRO novo;
+    LIVRO novo = {0};
     printf("Digite o codigo do livro:\n");
     scanf("%d", &novo.codigo);
     getchar();
@@ -136,6 +200,7 @@ void cadastrar_livro(LIVRO **livros, int *total, int *capacidade) {
     (*livros)[*total] = novo;
     (*total)++;
     salvar_livros(*livros, *total);
+    salvar_livros_bin(*livros, *total);
     printf("Livro cadastrado com sucesso!\n");
 }
 

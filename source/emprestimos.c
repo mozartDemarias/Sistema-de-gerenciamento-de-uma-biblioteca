@@ -45,7 +45,7 @@ void carregar_emprestimos(EMPRESTIMO **emprestimos, int *total, int *capacidade)
         if (linha[0] == '\0') continue;
         if (*total == 0 && (linha[0] < '0' || linha[0] > '9')) continue;
 
-        EMPRESTIMO temp;
+        EMPRESTIMO temp = {0};
         char *token = strtok(linha, ";");
         if (!token) continue;
         temp.id = atoi(token);
@@ -90,6 +90,70 @@ void salvar_emprestimos(EMPRESTIMO *emprestimos, int total) {
                 emprestimos[i].codigo_livro,
                 emprestimos[i].ativo);
     }
+    fclose(arq);
+}
+
+int carregar_emprestimos_bin(EMPRESTIMO **emprestimos, int *total, int *capacidade) {
+    FILE *arq = fopen("../data/emprestimos.bin", "rb");
+    if (arq == NULL) {
+        arq = fopen("data/emprestimos.bin", "rb");
+        if (arq == NULL) {
+            return 0;
+        }
+    }
+
+    int qtd = 0;
+    if (fread(&qtd, sizeof(int), 1, arq) != 1 || qtd < 0) {
+        fclose(arq);
+        return 0;
+    }
+
+    int nova_cap = (qtd > 0) ? qtd : CAPACIDADE_INICIAL_EMPRESTIMOS;
+    EMPRESTIMO *novo = (EMPRESTIMO *)malloc((size_t)nova_cap * sizeof(EMPRESTIMO));
+    if (novo == NULL) {
+        printf("Erro critico: Falha ao alocar memoria ao carregar emprestimos.bin!\n");
+        fclose(arq);
+        return 0;
+    }
+
+    if (qtd > 0) {
+        if (fread(novo, sizeof(EMPRESTIMO), (size_t)qtd, arq) != (size_t)qtd) {
+            free(novo);
+            fclose(arq);
+            return 0;
+        }
+    }
+
+    fclose(arq);
+    free(*emprestimos);
+    *emprestimos = novo;
+    *total = qtd;
+    *capacidade = nova_cap;
+    return 1;
+}
+
+void salvar_emprestimos_bin(EMPRESTIMO *emprestimos, int total) {
+    FILE *arq = fopen("../data/emprestimos.bin", "wb");
+    if (arq == NULL) {
+        arq = fopen("data/emprestimos.bin", "wb");
+        if (arq == NULL) {
+            printf("Erro ao salvar emprestimos.bin!\n");
+            return;
+        }
+    }
+
+    if (fwrite(&total, sizeof(int), 1, arq) != 1) {
+        printf("Erro ao gravar cabecalho de emprestimos.bin!\n");
+        fclose(arq);
+        return;
+    }
+
+    if (total > 0 && emprestimos != NULL) {
+        if (fwrite(emprestimos, sizeof(EMPRESTIMO), (size_t)total, arq) != (size_t)total) {
+            printf("Erro ao gravar registros em emprestimos.bin!\n");
+        }
+    }
+
     fclose(arq);
 }
 
@@ -143,7 +207,7 @@ void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacid
         }
     }
 
-    EMPRESTIMO novo;
+    EMPRESTIMO novo = {0};
     novo.id = novo_id;
     novo.matricula_usuario = matricula;
     novo.codigo_livro = codigo_livro;
@@ -155,7 +219,9 @@ void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacid
     livros[idx_liv].quantidade--;
 
     salvar_emprestimos(*emprestimos, *total_emp);
+    salvar_emprestimos_bin(*emprestimos, *total_emp);
     salvar_livros(livros, total_liv);
+    salvar_livros_bin(livros, total_liv);
     printf("Emprestimo registrado com sucesso! ID: %d\n", novo_id);
 }
 
@@ -192,11 +258,13 @@ void registrar_devolucao(EMPRESTIMO *emprestimos, int total_emp, LIVRO *livros, 
         if (livros[i].codigo == emprestimos[idx_emp].codigo_livro) {
             livros[i].quantidade++;
             salvar_livros(livros, total_liv);
+            salvar_livros_bin(livros, total_liv);
             break;
         }
     }
 
     salvar_emprestimos(emprestimos, total_emp);
+    salvar_emprestimos_bin(emprestimos, total_emp);
     printf("Devolucao registrada com sucesso!\n");
 }
 

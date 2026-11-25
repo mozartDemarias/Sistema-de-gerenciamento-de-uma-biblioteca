@@ -46,7 +46,7 @@ void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade) {
         if (linha[0] == '\0') continue;
         if (*total == 0 && (linha[0] < '0' || linha[0] > '9')) continue;
 
-        USUARIO temp;
+        USUARIO temp = {0};
         char *token = strtok(linha, ";");
         if (!token) continue;
         temp.matricula = atoi(token);
@@ -91,8 +91,72 @@ void salvar_usuarios(USUARIO *usuarios, int total) {
     fclose(arq);
 }
 
+int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade) {
+    FILE *arq = fopen("../data/usuarios.bin", "rb");
+    if (arq == NULL) {
+        arq = fopen("data/usuarios.bin", "rb");
+        if (arq == NULL) {
+            return 0;
+        }
+    }
+
+    int qtd = 0;
+    if (fread(&qtd, sizeof(int), 1, arq) != 1 || qtd < 0) {
+        fclose(arq);
+        return 0;
+    }
+
+    int nova_cap = (qtd > 0) ? qtd : CAPACIDADE_INICIAL_USUARIOS;
+    USUARIO *novo = (USUARIO *)malloc((size_t)nova_cap * sizeof(USUARIO));
+    if (novo == NULL) {
+        printf("Erro critico: Falha ao alocar memoria ao carregar usuarios.bin!\n");
+        fclose(arq);
+        return 0;
+    }
+
+    if (qtd > 0) {
+        if (fread(novo, sizeof(USUARIO), (size_t)qtd, arq) != (size_t)qtd) {
+            free(novo);
+            fclose(arq);
+            return 0;
+        }
+    }
+
+    fclose(arq);
+    free(*usuarios);
+    *usuarios = novo;
+    *total = qtd;
+    *capacidade = nova_cap;
+    return 1;
+}
+
+void salvar_usuarios_bin(USUARIO *usuarios, int total) {
+    FILE *arq = fopen("../data/usuarios.bin", "wb");
+    if (arq == NULL) {
+        arq = fopen("data/usuarios.bin", "wb");
+        if (arq == NULL) {
+            printf("Erro ao salvar usuarios.bin!\n");
+            return;
+        }
+    }
+
+    if (fwrite(&total, sizeof(int), 1, arq) != 1) {
+        printf("Erro ao gravar cabecalho de usuarios.bin!\n");
+        fclose(arq);
+        return;
+    }
+
+    if (total > 0 && usuarios != NULL) {
+        if (fwrite(usuarios, sizeof(USUARIO), (size_t)total, arq) != (size_t)total) {
+            printf("Erro ao gravar registros em usuarios.bin!\n");
+        }
+    }
+
+    fclose(arq);
+}
+
 void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade) {
-    USUARIO novo;
+    USUARIO novo = {0};
     printf("Digite o numero de matricula:\n");
     scanf("%d", &novo.matricula);
     getchar();
@@ -119,6 +183,7 @@ void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade) {
     (*usuarios)[*total] = novo;
     (*total)++;
     salvar_usuarios(*usuarios, *total);
+    salvar_usuarios_bin(*usuarios, *total);
     printf("Usuario cadastrado com sucesso!\n");
 }
 

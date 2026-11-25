@@ -13,6 +13,8 @@ typedef struct {
 
 void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade);
 void salvar_usuarios(USUARIO *usuarios, int total);
+int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade);
+void salvar_usuarios_bin(USUARIO *usuarios, int total);
 void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade);
 void listar_usuarios(USUARIO *usuarios, int total);
 void buscar_usuario_matricula(USUARIO *usuarios, int total);

@@ -6,29 +6,50 @@
 #include "../include/ordenacao.h"
 
 int main() {
-    int capacidade_livros = CAPACIDADE_INICIAL_LIVROS;
+    int capacidade_livros = 0;
     int total_livros = 0;
-    LIVRO *lista_livros = (LIVRO *)malloc((size_t)capacidade_livros * sizeof(LIVRO));
+    LIVRO *lista_livros = NULL;
 
-    int capacidade_usuarios = CAPACIDADE_INICIAL_USUARIOS;
+    int capacidade_usuarios = 0;
     int total_usuarios = 0;
-    USUARIO *lista_usuarios = (USUARIO *)malloc((size_t)capacidade_usuarios * sizeof(USUARIO));
+    USUARIO *lista_usuarios = NULL;
 
-    int capacidade_emprestimos = CAPACIDADE_INICIAL_EMPRESTIMOS;
+    int capacidade_emprestimos = 0;
     int total_emprestimos = 0;
-    EMPRESTIMO *lista_emprestimos = (EMPRESTIMO *)malloc((size_t)capacidade_emprestimos * sizeof(EMPRESTIMO));
+    EMPRESTIMO *lista_emprestimos = NULL;
 
-    if (lista_livros == NULL || lista_usuarios == NULL || lista_emprestimos == NULL) {
-        printf("Erro critico: Falha ao alocar memoria inicial!\n");
-        free(lista_livros);
-        free(lista_usuarios);
-        free(lista_emprestimos);
-        return 1;
+    if (!carregar_livros_bin(&lista_livros, &total_livros, &capacidade_livros)) {
+        capacidade_livros = CAPACIDADE_INICIAL_LIVROS;
+        lista_livros = (LIVRO *)malloc((size_t)capacidade_livros * sizeof(LIVRO));
+        if (lista_livros == NULL) {
+            printf("Erro critico: Falha ao alocar memoria inicial para livros!\n");
+            return 1;
+        }
+        carregar_livros(&lista_livros, &total_livros, &capacidade_livros);
     }
 
-    carregar_livros(&lista_livros, &total_livros, &capacidade_livros);
-    carregar_usuarios(&lista_usuarios, &total_usuarios, &capacidade_usuarios);
-    carregar_emprestimos(&lista_emprestimos, &total_emprestimos, &capacidade_emprestimos);
+    if (!carregar_usuarios_bin(&lista_usuarios, &total_usuarios, &capacidade_usuarios)) {
+        capacidade_usuarios = CAPACIDADE_INICIAL_USUARIOS;
+        lista_usuarios = (USUARIO *)malloc((size_t)capacidade_usuarios * sizeof(USUARIO));
+        if (lista_usuarios == NULL) {
+            printf("Erro critico: Falha ao alocar memoria inicial para usuarios!\n");
+            free(lista_livros);
+            return 1;
+        }
+        carregar_usuarios(&lista_usuarios, &total_usuarios, &capacidade_usuarios);
+    }
+
+    if (!carregar_emprestimos_bin(&lista_emprestimos, &total_emprestimos, &capacidade_emprestimos)) {
+        capacidade_emprestimos = CAPACIDADE_INICIAL_EMPRESTIMOS;
+        lista_emprestimos = (EMPRESTIMO *)malloc((size_t)capacidade_emprestimos * sizeof(EMPRESTIMO));
+        if (lista_emprestimos == NULL) {
+            printf("Erro critico: Falha ao alocar memoria inicial para emprestimos!\n");
+            free(lista_livros);
+            free(lista_usuarios);
+            return 1;
+        }
+        carregar_emprestimos(&lista_emprestimos, &total_emprestimos, &capacidade_emprestimos);
+    }
 
     int escolha;
     do {
@@ -47,6 +68,7 @@ int main() {
         printf("12- Ordenar usuarios por matricula (Insertion Sort)\n");
         printf("13- Busca binaria de livro por codigo\n");
         printf("14- Busca binaria de usuario por matricula\n");
+        printf("15- Sincronizar/salvar dados em binario (.bin)\n");
         printf("0- Sair\n");
         printf("Escolha a opcao que deseja: ");
 
@@ -151,6 +173,12 @@ int main() {
                 break;
             case 14:
                 buscar_usuario_binaria_matricula(lista_usuarios, total_usuarios);
+                break;
+            case 15:
+                salvar_livros_bin(lista_livros, total_livros);
+                salvar_usuarios_bin(lista_usuarios, total_usuarios);
+                salvar_emprestimos_bin(lista_emprestimos, total_emprestimos);
+                printf("Dados sincronizados e salvos em arquivos binarios (.bin) com sucesso!\n");
                 break;
             case 0:
                 printf("Encerrando sistema...\n");

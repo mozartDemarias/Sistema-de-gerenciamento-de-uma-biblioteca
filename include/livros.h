@@ -15,6 +15,8 @@ typedef struct {
 
 void carregar_livros(LIVRO **livros, int *total, int *capacidade);
 void salvar_livros(LIVRO *livros, int total);
+int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade);
+void salvar_livros_bin(LIVRO *livros, int total);
 void cadastrar_livro(LIVRO **livros, int *total, int *capacidade);
 void listar_livros(LIVRO *livros, int total);
 void buscar_livro_titulo(LIVRO *livros, int total);
