@@ -20,5 +20,8 @@ void salvar_emprestimos_bin(EMPRESTIMO *emprestimos, int total);
 void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacidade_emp, LIVRO *livros, int total_liv, USUARIO *usuarios, int total_usu);
 void registrar_devolucao(EMPRESTIMO *emprestimos, int total_emp, LIVRO *livros, int total_liv);
 void listar_emprestimos(EMPRESTIMO *emprestimos, int total_emp);
+void exibir_historico_usuario(EMPRESTIMO *emprestimos, int total_emp,
+                              LIVRO *livros, int total_liv,
+                              USUARIO *usuarios, int total_usu);
 
 #endif

@@ -174,3 +174,97 @@ void gerar_relatorio_desempenho(void) {
     fclose(arq);
     printf("Relatorio salvo em data/relatorio_desempenho.txt!\n");
 }
+
+void exportar_relatorio_geral(LIVRO *livros, int total_liv,
+                              USUARIO *usuarios, int total_usu,
+                              EMPRESTIMO *emprestimos, int total_emp) {
+    FILE *arq = fopen("../data/relatorio_biblioteca.txt", "w");
+    if (arq == NULL) {
+        arq = fopen("data/relatorio_biblioteca.txt", "w");
+    }
+    if (arq == NULL) {
+        printf("Erro ao salvar data/relatorio_biblioteca.txt!\n");
+        return;
+    }
+
+    int total_exemplares = 0;
+    for (int i = 0; i < total_liv; i++) {
+        total_exemplares += livros[i].quantidade;
+    }
+
+    int ativos = 0;
+    int devolvidos = 0;
+    for (int i = 0; i < total_emp; i++) {
+        if (emprestimos[i].ativo) {
+            ativos++;
+        } else {
+            devolvidos++;
+        }
+    }
+
+    fprintf(arq, "=====================================================================\n");
+    fprintf(arq, "              RELATORIO CONSOLIDADO DA BIBLIOTECA                    \n");
+    fprintf(arq, "=====================================================================\n\n");
+
+    fprintf(arq, "1. RESUMO ESTATISTICO\n");
+    fprintf(arq, "---------------------------------------------------------------------\n");
+    fprintf(arq, "Total de titulos no acervo:      %d\n", total_liv);
+    fprintf(arq, "Total de exemplares disponiveis: %d\n", total_exemplares);
+    fprintf(arq, "Total de usuarios cadastrados:   %d\n", total_usu);
+    fprintf(arq, "Total de emprestimos (geral):    %d\n", total_emp);
+    fprintf(arq, "Emprestimos ativos:              %d\n", ativos);
+    fprintf(arq, "Emprestimos devolvidos:          %d\n\n", devolvidos);
+
+    fprintf(arq, "2. ACERVO COMPLETO DE LIVROS\n");
+    fprintf(arq, "---------------------------------------------------------------------\n");
+    if (total_liv == 0 || livros == NULL) {
+        fprintf(arq, "Nenhum livro cadastrado.\n\n");
+    } else {
+        for (int i = 0; i < total_liv; i++) {
+            fprintf(arq, "Cod: %d | Titulo: %s | Autor: %s | Ano: %d | Qtd: %d\n",
+                    livros[i].codigo,
+                    livros[i].titulo,
+                    livros[i].autor,
+                    livros[i].ano,
+                    livros[i].quantidade);
+        }
+        fprintf(arq, "\n");
+    }
+
+    fprintf(arq, "3. EMPRESTIMOS ATIVOS\n");
+    fprintf(arq, "---------------------------------------------------------------------\n");
+    if (ativos == 0 || emprestimos == NULL) {
+        fprintf(arq, "Nenhum emprestimo ativo no momento.\n");
+    } else {
+        for (int i = 0; i < total_emp; i++) {
+            if (emprestimos[i].ativo) {
+                const char *nome_usuario = "Usuario nao encontrado";
+                for (int u = 0; u < total_usu; u++) {
+                    if (usuarios[u].matricula == emprestimos[i].matricula_usuario) {
+                        nome_usuario = usuarios[u].nome;
+                        break;
+                    }
+                }
+
+                const char *titulo_livro = "Livro nao encontrado";
+                for (int l = 0; l < total_liv; l++) {
+                    if (livros[l].codigo == emprestimos[i].codigo_livro) {
+                        titulo_livro = livros[l].titulo;
+                        break;
+                    }
+                }
+
+                fprintf(arq, "ID: %d | Usuario: %s (Mat: %d) | Livro: %s (Cod: %d)\n",
+                        emprestimos[i].id,
+                        nome_usuario,
+                        emprestimos[i].matricula_usuario,
+                        titulo_livro,
+                        emprestimos[i].codigo_livro);
+            }
+        }
+    }
+
+    fprintf(arq, "\n=====================================================================\n");
+    fclose(arq);
+    printf("Relatorio consolidado exportado para data/relatorio_biblioteca.txt!\n");
+}

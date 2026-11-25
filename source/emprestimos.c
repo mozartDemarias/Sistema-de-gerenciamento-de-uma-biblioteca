@@ -283,3 +283,74 @@ void listar_emprestimos(EMPRESTIMO *emprestimos, int total_emp) {
                emprestimos[i].ativo ? "Ativo" : "Devolvido");
     }
 }
+
+void exibir_historico_usuario(EMPRESTIMO *emprestimos, int total_emp,
+                              LIVRO *livros, int total_liv,
+                              USUARIO *usuarios, int total_usu) {
+    if (usuarios == NULL || total_usu <= 0) {
+        printf("Nenhum usuario cadastrado.\n");
+        return;
+    }
+
+    int matricula;
+    printf("Digite a matricula do usuario para ver o historico:\n");
+    if (scanf("%d", &matricula) != 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        printf("Erro: Matricula invalida.\n");
+        return;
+    }
+
+    int idx_usu = -1;
+    for (int i = 0; i < total_usu; i++) {
+        if (usuarios[i].matricula == matricula) {
+            idx_usu = i;
+            break;
+        }
+    }
+    if (idx_usu == -1) {
+        printf("Erro: Usuario com matricula %d nao encontrado.\n", matricula);
+        return;
+    }
+
+    printf("\n--- HISTORICO DE EMPRESTIMOS DO USUARIO ---\n");
+    printf("Matricula: %d | Nome: %s | Curso: %s\n",
+           usuarios[idx_usu].matricula, usuarios[idx_usu].nome, usuarios[idx_usu].curso);
+    printf("-------------------------------------------\n");
+
+    int encontrados = 0;
+    int ativos = 0;
+    int devolvidos = 0;
+
+    for (int i = 0; i < total_emp; i++) {
+        if (emprestimos[i].matricula_usuario == matricula) {
+            const char *titulo_livro = "Livro nao encontrado";
+            for (int j = 0; j < total_liv; j++) {
+                if (livros[j].codigo == emprestimos[i].codigo_livro) {
+                    titulo_livro = livros[j].titulo;
+                    break;
+                }
+            }
+
+            printf("ID: %d | Cod. Livro: %d | Titulo: %s | Status: %s\n",
+                   emprestimos[i].id,
+                   emprestimos[i].codigo_livro,
+                   titulo_livro,
+                   emprestimos[i].ativo ? "Ativo" : "Devolvido");
+
+            encontrados++;
+            if (emprestimos[i].ativo) {
+                ativos++;
+            } else {
+                devolvidos++;
+            }
+        }
+    }
+
+    if (encontrados == 0) {
+        printf("Nenhum emprestimo registrado para este usuario.\n");
+    } else {
+        printf("-------------------------------------------\n");
+        printf("Total: %d | Ativos: %d | Devolvidos: %d\n", encontrados, ativos, devolvidos);
+    }
+}

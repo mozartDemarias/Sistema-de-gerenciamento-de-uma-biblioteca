@@ -71,6 +71,8 @@ int main() {
         printf("14- Busca binaria de usuario por matricula\n");
         printf("15- Sincronizar/salvar dados em binario (.bin)\n");
         printf("16- Gerar Relatorio de Desempenho\n");
+        printf("17- Exibir historico de emprestimos por usuario\n");
+        printf("18- Exportar relatorio consolidado da biblioteca\n");
         printf("0- Sair\n");
         printf("Escolha a opcao que deseja: ");
 
@@ -184,6 +186,16 @@ int main() {
                 break;
             case 16:
                 gerar_relatorio_desempenho();
+                break;
+            case 17:
+                exibir_historico_usuario(lista_emprestimos, total_emprestimos,
+                                         lista_livros, total_livros,
+                                         lista_usuarios, total_usuarios);
+                break;
+            case 18:
+                exportar_relatorio_geral(lista_livros, total_livros,
+                                         lista_usuarios, total_usuarios,
+                                         lista_emprestimos, total_emprestimos);
                 break;
             case 0:
                 printf("Encerrando sistema...\n");
