@@ -3,6 +3,7 @@
 #include "../include/livros.h"
 #include "../include/usuario.h"
 #include "../include/emprestimos.h"
+#include "../include/ordenacao.h"
 
 int main() {
     int capacidade_livros = CAPACIDADE_INICIAL_LIVROS;
@@ -42,6 +43,8 @@ int main() {
         printf("8- Busca por matricula\n");
         printf("9- Registrar emprestimo\n");
         printf("10- Registrar devolucao\n");
+        printf("11- Ordenar acervo (Bubble Sort / Insertion Sort)\n");
+        printf("12- Ordenar usuarios por matricula (Insertion Sort)\n");
         printf("0- Sair\n");
         printf("Escolha a opcao que deseja: ");
 
@@ -85,6 +88,61 @@ int main() {
                 break;
             case 10:
                 registrar_devolucao(lista_emprestimos, total_emprestimos, lista_livros, total_livros);
+                break;
+            case 11: {
+                if (total_livros == 0) {
+                    printf("Nenhum livro cadastrado.\n");
+                    break;
+                }
+                int algoritmo = 0;
+                int criterio = 0;
+
+                printf("\n--- ORDENAR ACERVO ---\n");
+                printf("Escolha o algoritmo:\n");
+                printf("1- Bubble Sort\n");
+                printf("2- Insertion Sort\n");
+                printf("Opcao: ");
+                if (scanf("%d", &algoritmo) != 1) {
+                    int ch;
+                    while ((ch = getchar()) != '\n' && ch != EOF) {}
+                    printf("Opcao de algoritmo invalida!\n");
+                    break;
+                }
+
+                printf("Escolha o criterio:\n");
+                printf("1- Codigo\n");
+                printf("2- Titulo (ordem alfabetica)\n");
+                printf("Opcao: ");
+                if (scanf("%d", &criterio) != 1) {
+                    int ch;
+                    while ((ch = getchar()) != '\n' && ch != EOF) {}
+                    printf("Criterio invalido!\n");
+                    break;
+                }
+
+                if (algoritmo == 1 && criterio == 1) {
+                    bubble_sort_livros_codigo(lista_livros, total_livros);
+                } else if (algoritmo == 1 && criterio == 2) {
+                    bubble_sort_livros_titulo(lista_livros, total_livros);
+                } else if (algoritmo == 2 && criterio == 1) {
+                    insertion_sort_livros_codigo(lista_livros, total_livros);
+                } else if (algoritmo == 2 && criterio == 2) {
+                    insertion_sort_livros_titulo(lista_livros, total_livros);
+                } else {
+                    printf("Opcao de algoritmo ou criterio invalida!\n");
+                    break;
+                }
+
+                printf("Acervo ordenado com sucesso!\n");
+                listar_livros(lista_livros, total_livros);
+                break;
+            }
+            case 12:
+                insertion_sort_usuarios_matricula(lista_usuarios, total_usuarios);
+                if (total_usuarios > 0) {
+                    printf("Usuarios ordenados por matricula com sucesso!\n");
+                }
+                listar_usuarios(lista_usuarios, total_usuarios);
                 break;
             case 0:
                 printf("Encerrando sistema...\n");
