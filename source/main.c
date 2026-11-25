@@ -45,6 +45,8 @@ int main() {
         printf("10- Registrar devolucao\n");
         printf("11- Ordenar acervo (Bubble Sort / Insertion Sort)\n");
         printf("12- Ordenar usuarios por matricula (Insertion Sort)\n");
+        printf("13- Busca binaria de livro por codigo\n");
+        printf("14- Busca binaria de usuario por matricula\n");
         printf("0- Sair\n");
         printf("Escolha a opcao que deseja: ");
 
@@ -143,6 +145,12 @@ int main() {
                     printf("Usuarios ordenados por matricula com sucesso!\n");
                 }
                 listar_usuarios(lista_usuarios, total_usuarios);
+                break;
+            case 13:
+                buscar_livro_binaria_codigo(lista_livros, total_livros);
+                break;
+            case 14:
+                buscar_usuario_binaria_matricula(lista_usuarios, total_usuarios);
                 break;
             case 0:
                 printf("Encerrando sistema...\n");

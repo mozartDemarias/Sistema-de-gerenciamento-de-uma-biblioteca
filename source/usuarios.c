@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/usuario.h"
+#include "../include/ordenacao.h"
 #include "../include/utils.h"
 
 /* Garante espaco no vetor dinamico de usuarios, dobrando a capacidade quando necessario. */
@@ -145,5 +146,46 @@ void buscar_usuario_matricula(USUARIO *usuarios, int total) {
             return;
         }
     }
+    printf("Erro: Usuario com matricula %d nao encontrado.\n", mat);
+}
+
+void buscar_usuario_binaria_matricula(USUARIO *usuarios, int total) {
+    if (usuarios == NULL || total <= 0) {
+        printf("Nenhum usuario cadastrado.\n");
+        return;
+    }
+
+    int mat;
+    printf("Digite a matricula para busca binaria:\n");
+    if (scanf("%d", &mat) != 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        printf("Erro: Matricula invalida.\n");
+        return;
+    }
+
+    /* Garante que o vetor esteja ordenado por matricula antes da pesquisa binaria. */
+    insertion_sort_usuarios_matricula(usuarios, total);
+
+    int inicio = 0;
+    int fim = total - 1;
+    int comparacoes = 0;
+
+    while (inicio <= fim) {
+        int meio = inicio + (fim - inicio) / 2;
+        comparacoes++;
+
+        if (usuarios[meio].matricula == mat) {
+            printf("Encontrado (%d comparacoes) -> Matricula: %d | Nome: %s | Curso: %s\n",
+                   comparacoes, usuarios[meio].matricula, usuarios[meio].nome, usuarios[meio].curso);
+            return;
+        }
+        if (usuarios[meio].matricula < mat) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
     printf("Erro: Usuario com matricula %d nao encontrado.\n", mat);
 }

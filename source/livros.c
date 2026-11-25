@@ -2,6 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "../include/livros.h"
+#include "../include/ordenacao.h"
 #include "../include/utils.h"
 
 /* Garante espaco no vetor dinamico de livros, dobrando a capacidade quando necessario. */
@@ -188,4 +189,46 @@ void buscar_livro_autor(LIVRO *livros, int total) {
     if (!encontrou) {
         printf("Erro: Nenhum livro deste autor foi encontrado.\n");
     }
+}
+
+void buscar_livro_binaria_codigo(LIVRO *livros, int total) {
+    if (livros == NULL || total <= 0) {
+        printf("Nenhum livro cadastrado.\n");
+        return;
+    }
+
+    int codigo;
+    printf("Digite o codigo do livro para busca binaria:\n");
+    if (scanf("%d", &codigo) != 1) {
+        int ch;
+        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        printf("Erro: Codigo invalido.\n");
+        return;
+    }
+
+    /* Garante que o acervo esteja ordenado por codigo antes da pesquisa binaria. */
+    insertion_sort_livros_codigo(livros, total);
+
+    int inicio = 0;
+    int fim = total - 1;
+    int comparacoes = 0;
+
+    while (inicio <= fim) {
+        int meio = inicio + (fim - inicio) / 2;
+        comparacoes++;
+
+        if (livros[meio].codigo == codigo) {
+            printf("Encontrado (%d comparacoes) -> Cod: %d | Titulo: %s | Autor: %s | Ano: %d | Qtd: %d\n",
+                   comparacoes, livros[meio].codigo, livros[meio].titulo, livros[meio].autor,
+                   livros[meio].ano, livros[meio].quantidade);
+            return;
+        }
+        if (livros[meio].codigo < codigo) {
+            inicio = meio + 1;
+        } else {
+            fim = meio - 1;
+        }
+    }
+
+    printf("Erro: Livro com codigo %d nao encontrado.\n", codigo);
 }

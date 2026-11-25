@@ -16,5 +16,6 @@ void salvar_usuarios(USUARIO *usuarios, int total);
 void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade);
 void listar_usuarios(USUARIO *usuarios, int total);
 void buscar_usuario_matricula(USUARIO *usuarios, int total);
+void buscar_usuario_binaria_matricula(USUARIO *usuarios, int total);
 
 #endif
