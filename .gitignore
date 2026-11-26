@@ -1,0 +1,8 @@
+# Executaveis e objetos compilados
+bin/*.exe
+bin/biblioteca
+*.exe
+*.o
+
+# Arquivos binarios de dados gerados em runtime
+data/*.bin
