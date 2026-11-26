@@ -2,7 +2,13 @@
  * utils.c
  * Implementacoes manuais de limpeza e comparacao de strings (sem funcoes prontas de busca).
  */
+#include <stdio.h>
 #include "../include/utils.h"
+
+void limpar_buffer_entrada(void) {
+    int ch;
+    while ((ch = getchar()) != '\n' && ch != EOF) {}
+}
 
 void limpar_enter(char str[]) {
     int i = 0;

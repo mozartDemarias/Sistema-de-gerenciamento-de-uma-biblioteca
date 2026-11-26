@@ -11,8 +11,9 @@
 #include "../include/emprestimos.h"
 #include "../include/ordenacao.h"
 #include "../include/relatorios.h"
+#include "../include/utils.h"
 
-int main() {
+int main(void) {
     int capacidade_livros = 0;
     int total_livros = 0;
     LIVRO *lista_livros = NULL;
@@ -88,8 +89,7 @@ int main() {
         if (status_leitura == EOF) {
             escolha = 0;
         } else if (status_leitura != 1) {
-            int ch;
-            while ((ch = getchar()) != '\n' && ch != EOF) {}
+            limpar_buffer_entrada();
             escolha = -1;
         }
 
@@ -139,8 +139,7 @@ int main() {
                 printf("2- Insertion Sort\n");
                 printf("Opcao: ");
                 if (scanf("%d", &algoritmo) != 1) {
-                    int ch;
-                    while ((ch = getchar()) != '\n' && ch != EOF) {}
+                    limpar_buffer_entrada();
                     printf("Opcao de algoritmo invalida!\n");
                     break;
                 }
@@ -150,8 +149,7 @@ int main() {
                 printf("2- Titulo (ordem alfabetica)\n");
                 printf("Opcao: ");
                 if (scanf("%d", &criterio) != 1) {
-                    int ch;
-                    while ((ch = getchar()) != '\n' && ch != EOF) {}
+                    limpar_buffer_entrada();
                     printf("Criterio invalido!\n");
                     break;
                 }

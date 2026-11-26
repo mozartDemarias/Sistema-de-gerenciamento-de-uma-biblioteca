@@ -172,8 +172,12 @@ void salvar_usuarios_bin(USUARIO *usuarios, int total) {
 void cadastrar_usuario(USUARIO **usuarios, int *total, int *capacidade) {
     USUARIO novo = {0};
     printf("Digite o numero de matricula:\n");
-    scanf("%d", &novo.matricula);
-    getchar();
+    if (scanf("%d", &novo.matricula) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Matricula invalida.\n");
+        return;
+    }
+    limpar_buffer_entrada();
 
     for (int i = 0; i < *total; i++) {
         if ((*usuarios)[i].matricula == novo.matricula) {
@@ -216,7 +220,11 @@ void listar_usuarios(USUARIO *usuarios, int total) {
 void buscar_usuario_matricula(USUARIO *usuarios, int total) {
     int mat;
     printf("Digite a matricula para busca:\n");
-    scanf("%d", &mat);
+    if (scanf("%d", &mat) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Matricula invalida.\n");
+        return;
+    }
 
     for (int i = 0; i < total; i++) {
         if (usuarios[i].matricula == mat) {
@@ -238,8 +246,7 @@ void buscar_usuario_binaria_matricula(USUARIO *usuarios, int total) {
     int mat;
     printf("Digite a matricula para busca binaria:\n");
     if (scanf("%d", &mat) != 1) {
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        limpar_buffer_entrada();
         printf("Erro: Matricula invalida.\n");
         return;
     }

@@ -8,7 +8,6 @@
 #include <string.h>
 #include <time.h>
 #include "../include/relatorios.h"
-#include "../include/livros.h"
 #include "../include/ordenacao.h"
 
 /* Busca sequencial manual por codigo, contabilizando comparacoes realizadas. */
@@ -202,17 +201,21 @@ void exportar_relatorio_geral(LIVRO *livros, int total_liv,
     }
 
     int total_exemplares = 0;
-    for (int i = 0; i < total_liv; i++) {
-        total_exemplares += livros[i].quantidade;
+    if (livros != NULL) {
+        for (int i = 0; i < total_liv; i++) {
+            total_exemplares += livros[i].quantidade;
+        }
     }
 
     int ativos = 0;
     int devolvidos = 0;
-    for (int i = 0; i < total_emp; i++) {
-        if (emprestimos[i].ativo) {
-            ativos++;
-        } else {
-            devolvidos++;
+    if (emprestimos != NULL) {
+        for (int i = 0; i < total_emp; i++) {
+            if (emprestimos[i].ativo) {
+                ativos++;
+            } else {
+                devolvidos++;
+            }
         }
     }
 
@@ -254,18 +257,22 @@ void exportar_relatorio_geral(LIVRO *livros, int total_liv,
             if (emprestimos[i].ativo) {
                 /* Busca sequencial manual para resolver nome do usuario e titulo do livro. */
                 const char *nome_usuario = "Usuario nao encontrado";
-                for (int u = 0; u < total_usu; u++) {
-                    if (usuarios[u].matricula == emprestimos[i].matricula_usuario) {
-                        nome_usuario = usuarios[u].nome;
-                        break;
+                if (usuarios != NULL) {
+                    for (int u = 0; u < total_usu; u++) {
+                        if (usuarios[u].matricula == emprestimos[i].matricula_usuario) {
+                            nome_usuario = usuarios[u].nome;
+                            break;
+                        }
                     }
                 }
 
                 const char *titulo_livro = "Livro nao encontrado";
-                for (int l = 0; l < total_liv; l++) {
-                    if (livros[l].codigo == emprestimos[i].codigo_livro) {
-                        titulo_livro = livros[l].titulo;
-                        break;
+                if (livros != NULL) {
+                    for (int l = 0; l < total_liv; l++) {
+                        if (livros[l].codigo == emprestimos[i].codigo_livro) {
+                            titulo_livro = livros[l].titulo;
+                            break;
+                        }
                     }
                 }
 

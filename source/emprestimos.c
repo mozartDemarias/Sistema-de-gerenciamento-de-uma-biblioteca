@@ -176,7 +176,11 @@ void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacid
                           LIVRO *livros, int total_liv, USUARIO *usuarios, int total_usu) {
     int matricula;
     printf("Digite a matricula do usuario:\n");
-    scanf("%d", &matricula);
+    if (scanf("%d", &matricula) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Matricula invalida.\n");
+        return;
+    }
 
     int idx_usu = -1;
     for (int i = 0; i < total_usu; i++) {
@@ -192,7 +196,11 @@ void registrar_emprestimo(EMPRESTIMO **emprestimos, int *total_emp, int *capacid
 
     int codigo_livro;
     printf("Digite o codigo do livro:\n");
-    scanf("%d", &codigo_livro);
+    if (scanf("%d", &codigo_livro) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Codigo de livro invalido.\n");
+        return;
+    }
 
     int idx_liv = -1;
     for (int i = 0; i < total_liv; i++) {
@@ -249,7 +257,11 @@ void registrar_devolucao(EMPRESTIMO *emprestimos, int total_emp, LIVRO *livros, 
 
     int id;
     printf("Digite o ID do emprestimo para devolucao:\n");
-    scanf("%d", &id);
+    if (scanf("%d", &id) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: ID invalido.\n");
+        return;
+    }
 
     int idx_emp = -1;
     for (int i = 0; i < total_emp; i++) {
@@ -312,8 +324,7 @@ void exibir_historico_usuario(EMPRESTIMO *emprestimos, int total_emp,
     int matricula;
     printf("Digite a matricula do usuario para ver o historico:\n");
     if (scanf("%d", &matricula) != 1) {
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        limpar_buffer_entrada();
         printf("Erro: Matricula invalida.\n");
         return;
     }

@@ -184,8 +184,12 @@ void salvar_livros_bin(LIVRO *livros, int total) {
 void cadastrar_livro(LIVRO **livros, int *total, int *capacidade) {
     LIVRO novo = {0};
     printf("Digite o codigo do livro:\n");
-    scanf("%d", &novo.codigo);
-    getchar();
+    if (scanf("%d", &novo.codigo) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Codigo invalido.\n");
+        return;
+    }
+    limpar_buffer_entrada();
 
     for (int i = 0; i < *total; i++) {
         if ((*livros)[i].codigo == novo.codigo) {
@@ -203,10 +207,25 @@ void cadastrar_livro(LIVRO **livros, int *total, int *capacidade) {
     limpar_enter(novo.autor);
 
     printf("Digite o ano do livro:\n");
-    scanf("%d", &novo.ano);
+    if (scanf("%d", &novo.ano) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Ano invalido.\n");
+        return;
+    }
+    limpar_buffer_entrada();
 
     printf("Digite a quantidade:\n");
-    scanf("%d", &novo.quantidade);
+    if (scanf("%d", &novo.quantidade) != 1) {
+        limpar_buffer_entrada();
+        printf("Erro: Quantidade invalida.\n");
+        return;
+    }
+    limpar_buffer_entrada();
+
+    if (novo.quantidade < 0) {
+        printf("Erro: A quantidade nao pode ser negativa.\n");
+        return;
+    }
 
     if (!garantir_capacidade_livros(livros, *total, capacidade)) {
         return;
@@ -233,7 +252,7 @@ void listar_livros(LIVRO *livros, int total) {
 
 void buscar_livro_titulo(LIVRO *livros, int total) {
     char termo[MAX_TITULOS];
-    getchar();
+    limpar_buffer_entrada();
     printf("Digite o titulo para busca:\n");
     fgets(termo, sizeof(termo), stdin);
     limpar_enter(termo);
@@ -253,7 +272,7 @@ void buscar_livro_titulo(LIVRO *livros, int total) {
 
 void buscar_livro_autor(LIVRO *livros, int total) {
     char termo[MAX_AUTOR];
-    getchar();
+    limpar_buffer_entrada();
     printf("Digite o autor para busca:\n");
     fgets(termo, sizeof(termo), stdin);
     limpar_enter(termo);
@@ -281,8 +300,7 @@ void buscar_livro_binaria_codigo(LIVRO *livros, int total) {
     int codigo;
     printf("Digite o codigo do livro para busca binaria:\n");
     if (scanf("%d", &codigo) != 1) {
-        int ch;
-        while ((ch = getchar()) != '\n' && ch != EOF) {}
+        limpar_buffer_entrada();
         printf("Erro: Codigo invalido.\n");
         return;
     }
