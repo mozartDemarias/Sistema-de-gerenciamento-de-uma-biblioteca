@@ -42,10 +42,10 @@ static int garantir_capacidade_livros(LIVRO **livros, int total, int *capacidade
 
 /* Carrega os livros de livros.csv expandindo o vetor conforme necessario. */
 void carregar_livros(LIVRO **livros, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/livros.csv", "r");
+    FILE *arq = fopen("data/livros.csv", "r");
     *total = 0;
     if (arq == NULL) {
-        arq = fopen("data/livros.csv", "r");
+        arq = fopen("../data/livros.csv", "r");
         if (arq == NULL) return;
     }
 
@@ -91,9 +91,9 @@ void carregar_livros(LIVRO **livros, int *total, int *capacidade) {
 }
 
 void salvar_livros(LIVRO *livros, int total) {
-    FILE *arq = fopen("../data/livros.csv", "w");
+    FILE *arq = fopen("data/livros.csv", "w");
     if (arq == NULL) {
-        arq = fopen("data/livros.csv", "w");
+        arq = fopen("../data/livros.csv", "w");
         if (arq == NULL) {
             printf("Erro ao salvar livros.csv!\n");
             return;
@@ -117,9 +117,9 @@ void salvar_livros(LIVRO *livros, int total) {
  * Aloca exatamente a capacidade necessaria com malloc e libera o ponteiro anterior apenas apos sucesso.
  */
 int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/livros.bin", "rb");
+    FILE *arq = fopen("data/livros.bin", "rb");
     if (arq == NULL) {
-        arq = fopen("data/livros.bin", "rb");
+        arq = fopen("../data/livros.bin", "rb");
         if (arq == NULL) {
             return 0;
         }
@@ -157,9 +157,9 @@ int carregar_livros_bin(LIVRO **livros, int *total, int *capacidade) {
 
 /* Persiste o inteiro 'total' seguido do bloco contiguo de structs LIVRO em livros.bin. */
 void salvar_livros_bin(LIVRO *livros, int total) {
-    FILE *arq = fopen("../data/livros.bin", "wb");
+    FILE *arq = fopen("data/livros.bin", "wb");
     if (arq == NULL) {
-        arq = fopen("data/livros.bin", "wb");
+        arq = fopen("../data/livros.bin", "wb");
         if (arq == NULL) {
             printf("Erro ao salvar livros.bin!\n");
             return;

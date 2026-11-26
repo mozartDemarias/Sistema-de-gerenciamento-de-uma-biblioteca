@@ -166,9 +166,9 @@ void gerar_relatorio_desempenho(void) {
                        tempo_seq_ms, tempo_bin_ms,
                        comp_seq_por_busca, comp_bin_por_busca);
 
-    FILE *arq = fopen("../data/relatorio_desempenho.txt", "w");
+    FILE *arq = fopen("data/relatorio_desempenho.txt", "w");
     if (arq == NULL) {
-        arq = fopen("data/relatorio_desempenho.txt", "w");
+        arq = fopen("../data/relatorio_desempenho.txt", "w");
     }
 
     if (arq == NULL) {
@@ -191,9 +191,9 @@ void gerar_relatorio_desempenho(void) {
 void exportar_relatorio_geral(LIVRO *livros, int total_liv,
                               USUARIO *usuarios, int total_usu,
                               EMPRESTIMO *emprestimos, int total_emp) {
-    FILE *arq = fopen("../data/relatorio_biblioteca.txt", "w");
+    FILE *arq = fopen("data/relatorio_biblioteca.txt", "w");
     if (arq == NULL) {
-        arq = fopen("data/relatorio_biblioteca.txt", "w");
+        arq = fopen("../data/relatorio_biblioteca.txt", "w");
     }
     if (arq == NULL) {
         printf("Erro ao salvar data/relatorio_biblioteca.txt!\n");

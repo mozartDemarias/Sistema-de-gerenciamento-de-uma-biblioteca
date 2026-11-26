@@ -41,10 +41,10 @@ static int garantir_capacidade_emprestimos(EMPRESTIMO **emprestimos, int total, 
 
 /* Carrega os emprestimos de emprestimos.csv expandindo o vetor conforme necessario. */
 void carregar_emprestimos(EMPRESTIMO **emprestimos, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/emprestimos.csv", "r");
+    FILE *arq = fopen("data/emprestimos.csv", "r");
     *total = 0;
     if (arq == NULL) {
-        arq = fopen("data/emprestimos.csv", "r");
+        arq = fopen("../data/emprestimos.csv", "r");
         if (arq == NULL) return;
     }
 
@@ -82,9 +82,9 @@ void carregar_emprestimos(EMPRESTIMO **emprestimos, int *total, int *capacidade)
 }
 
 void salvar_emprestimos(EMPRESTIMO *emprestimos, int total) {
-    FILE *arq = fopen("../data/emprestimos.csv", "w");
+    FILE *arq = fopen("data/emprestimos.csv", "w");
     if (arq == NULL) {
-        arq = fopen("data/emprestimos.csv", "w");
+        arq = fopen("../data/emprestimos.csv", "w");
         if (arq == NULL) {
             printf("Erro ao salvar emprestimos.csv!\n");
             return;
@@ -107,9 +107,9 @@ void salvar_emprestimos(EMPRESTIMO *emprestimos, int total) {
  * Aloca memoria dinamicamente com malloc e substitui o ponteiro anterior somente apos sucesso.
  */
 int carregar_emprestimos_bin(EMPRESTIMO **emprestimos, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/emprestimos.bin", "rb");
+    FILE *arq = fopen("data/emprestimos.bin", "rb");
     if (arq == NULL) {
-        arq = fopen("data/emprestimos.bin", "rb");
+        arq = fopen("../data/emprestimos.bin", "rb");
         if (arq == NULL) {
             return 0;
         }
@@ -147,9 +147,9 @@ int carregar_emprestimos_bin(EMPRESTIMO **emprestimos, int *total, int *capacida
 
 /* Persiste o inteiro 'total' seguido do bloco contiguo de structs EMPRESTIMO em emprestimos.bin. */
 void salvar_emprestimos_bin(EMPRESTIMO *emprestimos, int total) {
-    FILE *arq = fopen("../data/emprestimos.bin", "wb");
+    FILE *arq = fopen("data/emprestimos.bin", "wb");
     if (arq == NULL) {
-        arq = fopen("data/emprestimos.bin", "wb");
+        arq = fopen("../data/emprestimos.bin", "wb");
         if (arq == NULL) {
             printf("Erro ao salvar emprestimos.bin!\n");
             return;

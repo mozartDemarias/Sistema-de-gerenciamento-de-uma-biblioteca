@@ -42,10 +42,10 @@ static int garantir_capacidade_usuarios(USUARIO **usuarios, int total, int *capa
 
 /* Carrega os usuarios de usuarios.csv expandindo o vetor conforme necessario. */
 void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/usuarios.csv", "r");
+    FILE *arq = fopen("data/usuarios.csv", "r");
     *total = 0;
     if (arq == NULL) {
-        arq = fopen("data/usuarios.csv", "r");
+        arq = fopen("../data/usuarios.csv", "r");
         if (arq == NULL) return;
     }
 
@@ -81,9 +81,9 @@ void carregar_usuarios(USUARIO **usuarios, int *total, int *capacidade) {
 }
 
 void salvar_usuarios(USUARIO *usuarios, int total) {
-    FILE *arq = fopen("../data/usuarios.csv", "w");
+    FILE *arq = fopen("data/usuarios.csv", "w");
     if (arq == NULL) {
-        arq = fopen("data/usuarios.csv", "w");
+        arq = fopen("../data/usuarios.csv", "w");
         if (arq == NULL) {
             printf("Erro ao salvar usuarios.csv!\n");
             return;
@@ -105,9 +105,9 @@ void salvar_usuarios(USUARIO *usuarios, int total) {
  * Aloca dinamicamente com malloc e substitui o ponteiro anterior somente apos leitura completa.
  */
 int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade) {
-    FILE *arq = fopen("../data/usuarios.bin", "rb");
+    FILE *arq = fopen("data/usuarios.bin", "rb");
     if (arq == NULL) {
-        arq = fopen("data/usuarios.bin", "rb");
+        arq = fopen("../data/usuarios.bin", "rb");
         if (arq == NULL) {
             return 0;
         }
@@ -145,9 +145,9 @@ int carregar_usuarios_bin(USUARIO **usuarios, int *total, int *capacidade) {
 
 /* Persiste o inteiro 'total' seguido do bloco contiguo de structs USUARIO em usuarios.bin. */
 void salvar_usuarios_bin(USUARIO *usuarios, int total) {
-    FILE *arq = fopen("../data/usuarios.bin", "wb");
+    FILE *arq = fopen("data/usuarios.bin", "wb");
     if (arq == NULL) {
-        arq = fopen("data/usuarios.bin", "wb");
+        arq = fopen("../data/usuarios.bin", "wb");
         if (arq == NULL) {
             printf("Erro ao salvar usuarios.bin!\n");
             return;
